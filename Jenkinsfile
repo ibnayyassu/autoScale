@@ -8,7 +8,7 @@ pipeline {
             steps {
                 withCredentials([[
                     $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'Test Pipeline' 
+                    credentialsId: 'AWS_SECRET_ACCESS_KEY' 
                 ]]) {
                     sh '''
                     echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
@@ -19,7 +19,7 @@ pipeline {
         }
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/derrickSh43/autoScale' 
+                git branch: 'main', url: 'https://github.com/ibnayyassu/Jenkins_Pipeline' 
             }
         }
         stage('Initialize Terraform') {
@@ -33,11 +33,11 @@ pipeline {
             steps {
                 withCredentials([[
                     $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'Test Pipeline'
+                    credentialsId: 'AWS_SECRET_ACCESS_KEY'
                 ]]) {
                     sh '''
                     export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                    export Test Pipeline=$Test Pipeline
+                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
                     terraform plan -out=tfplan
                     '''
                 }
@@ -48,11 +48,11 @@ pipeline {
                 input message: "Approve Terraform Apply?", ok: "Deploy"
                 withCredentials([[
                     $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'Test Pipeline'
+                    credentialsId: 'AWS_SECRET_ACCESS_KEY'
                 ]]) {
                     sh '''
                     export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                    export Test Pipeline=$Test Pipeline
+                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
                     terraform apply -auto-approve tfplan
                     '''
                 }
